@@ -1,6 +1,8 @@
 ARG SERVICE_NAME=web
 
-FROM node:18.17.0-alpine AS base
+ARG VITE_BACKEND_URL
+
+FROM node:23.8.0-alpine AS base
 
 # Construi a aplicação
 FROM base AS build
@@ -15,26 +17,35 @@ COPY . .
 
 RUN turbo prune $SERVICE_NAME --docker
 
+# Instala a aplicação
+FROM base AS installer
+
+ARG SERVICE_NAME
+
+RUN apk update && apk add --repository=community && apk add nodejs npm openrc
+
+WORKDIR /app
+
+COPY --from=build /app/out/json/ . 
+RUN npm pkg delete scripts.prepare
+RUN npm install
+
+COPY --from=build /app/out/full/ .
+# Adicione esta linha para corrigir o problema do esbuild
+RUN cd ./apps/$SERVICE_NAME && npm install esbuild@0.25.0 && npm rebuild esbuild
+RUN npm run build -w $SERVICE_NAME
+
+CMD tail -f /dev/null
+
 # Roda a aplicação
 FROM nginx:1.25.3-alpine AS runner
 
 ARG SERVICE_NAME
 
-RUN apk update && apk add --repository=community && apk add nodejs npm nginx openrc
 
-WORKDIR /app
+COPY --from=installer /app/apps/$SERVICE_NAME/dist/* /usr/share/nginx/html/
 
-COPY --from=build /app/out/json/ .
-RUN npm pkg delete scripts.prepare
-RUN npm install
-
-COPY --from=build /app/out/full/ .
-
-RUN npm run build -w $SERVICE_NAME
-
-COPY --from=build /app/out/full/apps/$SERVICE_NAME/dist/* /usr/share/nginx/html/
-
-COPY --from=build /app/out/full/apps/$SERVICE_NAME/config/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=installer /app/apps/$SERVICE_NAME/config/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

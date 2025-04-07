@@ -43,16 +43,15 @@ services:
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
+      args:
+        - VITE_BACKEND_URL=${BACKEND_URL}
     restart: unless-stopped
     ports:
-      - "3000:3000"
-    environment:
-      - VITE_BACKEND_URL=${BACKEND_URL}
-      - API_URL=${API_URL}
+      - "2323:80"
     networks:
       - utils4dev-network
-    depends_on:
-      - utils4dev-api
+    # depends_on:
+    #   - utils4dev-api
 
 volumes:
   postgres_data:
