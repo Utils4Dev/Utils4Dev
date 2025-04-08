@@ -21,6 +21,7 @@ RUN turbo prune $SERVICE_NAME --docker
 FROM base AS installer
 
 ARG SERVICE_NAME
+ARG VITE_BACKEND_URL
 
 RUN apk update && apk add --repository=community && apk add nodejs npm openrc
 
@@ -38,14 +39,19 @@ RUN npm run build -w $SERVICE_NAME
 CMD tail -f /dev/null
 
 # Roda a aplicação
-FROM nginx:1.25.3-alpine AS runner
+FROM nginx:1.27.4-alpine AS runner
 
 ARG SERVICE_NAME
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
-
-COPY --from=installer /app/apps/$SERVICE_NAME/dist/* /usr/share/nginx/html/
+# Copiar toda a pasta dist ao invés de apenas os arquivos da raiz
+COPY --from=installer /app/apps/$SERVICE_NAME/dist /usr/share/nginx/html/
 
 COPY --from=installer /app/apps/$SERVICE_NAME/config/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Adicionar configuração de tipos MIME corretos para JavaScript
+RUN echo 'types { application/javascript js mjs; }' > /etc/nginx/conf.d/javascript_mime.conf
 
 EXPOSE 80
 

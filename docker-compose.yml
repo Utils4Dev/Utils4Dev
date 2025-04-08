@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   utils4dev-postgres:
@@ -21,7 +21,7 @@ services:
       dockerfile: ./apps/api/Dockerfile
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "3000:3000"
     environment:
       - NODE_ENV=${NODE_ENV}
       - WEB_URL=${WEB_URL}
@@ -47,11 +47,13 @@ services:
         - VITE_BACKEND_URL=${BACKEND_URL}
     restart: unless-stopped
     ports:
-      - "2323:80"
+      - "8080:80"
+    environment:
+      - VITE_BACKEND_URL=${BACKEND_URL}
     networks:
       - utils4dev-network
-    # depends_on:
-    #   - utils4dev-api
+    depends_on:
+      - utils4dev-api
 
 volumes:
   postgres_data:
