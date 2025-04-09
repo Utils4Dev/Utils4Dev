@@ -4,15 +4,15 @@ import { Profile } from 'passport';
 import { Strategy } from 'passport-github2';
 import { AuthService } from '../auth.service';
 
-const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
+const { DOMAIN_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super({
-      clientID: GITHUB_CLIENT_ID!,
-      clientSecret: GITHUB_CLIENT_SECRET!,
-      callbackURL: 'http://localhost:3000/auth/github/callback',
+      clientID: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
+      callbackURL: DOMAIN_URL + '/auth/github/callback',
     });
   }
 
@@ -26,7 +26,7 @@ export class GithubStrategy extends PassportStrategy(Strategy) {
         name: profile.displayName,
         githubProvider: {
           externalId: profile.id,
-          login: profile.username!,
+          login: profile.username,
         },
       },
     );

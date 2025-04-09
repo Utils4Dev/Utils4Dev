@@ -25,6 +25,7 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV}
       - WEB_URL=${WEB_URL}
+      - DOMAIN_URL=${BACKEND_URL}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION=${JWT_EXPIRATION}
       - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}

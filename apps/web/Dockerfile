@@ -22,6 +22,7 @@ FROM base AS installer
 
 ARG SERVICE_NAME
 ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
 RUN apk update && apk add --repository=community && apk add nodejs npm openrc
 
@@ -42,8 +43,6 @@ CMD tail -f /dev/null
 FROM nginx:1.27.4-alpine AS runner
 
 ARG SERVICE_NAME
-ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
 # Copiar toda a pasta dist ao invés de apenas os arquivos da raiz
 COPY --from=installer /app/apps/$SERVICE_NAME/dist /usr/share/nginx/html/

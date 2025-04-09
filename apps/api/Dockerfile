@@ -42,4 +42,5 @@ WORKDIR /app
 # Copie apenas os arquivos necessários para produção
 COPY --from=installer /app ./
 
-CMD npm run start:prod -w api
+# Executar migrações e iniciar a aplicação
+CMD npm run migration:run -w api && npm run start:prod -w api

@@ -1,4 +1,3 @@
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { CodeLanguage } from '../enum/code-language.enum';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class Code {

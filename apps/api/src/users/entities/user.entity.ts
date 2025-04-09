@@ -1,4 +1,3 @@
-import { Code } from 'src/code/entities/code.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { GithubProvider } from '../entities/github-provider.entity';
+import { Code } from 'src/code/entities/code.entity';
 
 @Entity()
 export class User {

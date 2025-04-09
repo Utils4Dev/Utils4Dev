@@ -10,7 +10,7 @@ const { WEB_URL, PORT = '3000' } = process.env;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: [WEB_URL!],
+      origin: [WEB_URL],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       credentials: true,
     },
