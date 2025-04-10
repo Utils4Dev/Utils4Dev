@@ -18,8 +18,6 @@ services:
       context: .
       dockerfile: ./apps/api/Dockerfile
     restart: unless-stopped
-    ports:
-      - "5001:3000"
     environment:
       - NODE_ENV=${NODE_ENV}
       - WEB_URL=${WEB_URL}
@@ -35,8 +33,17 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - utils4dev-network
+      - traefik-proxy
     depends_on:
       - utils4dev-postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.utils4dev-api-service.loadbalancer.server.port=3000"
+      - "traefik.http.routers.utils4dev-api.rule=Host(`utils4dev.${DOMAIN}`) && PathPrefix(`/${API_PATH_PREFIX}`)"
+      - "traefik.http.routers.utils4dev-api.priority=100"
+      - "traefik.http.routers.utils4dev-api.entrypoints=websecure"
+      - "traefik.http.routers.utils4dev-api.tls=true"
+      - "traefik.http.routers.utils4dev-api.tls.certresolver=letsencrypt"
 
   utils4dev-web:
     build:
@@ -45,14 +52,21 @@ services:
       args:
         - VITE_BACKEND_URL=${BACKEND_URL}
     restart: unless-stopped
-    ports:
-      - "5000:80"
     environment:
       - VITE_BACKEND_URL=${BACKEND_URL}
     networks:
       - utils4dev-network
+      - traefik-proxy
     depends_on:
       - utils4dev-api
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.utils4dev-web-service.loadbalancer.server.port=80"
+      - "traefik.http.routers.utils4dev-web.rule=Host(`utils4dev.${DOMAIN}`)"
+      - "traefik.http.routers.utils4dev-web.priority=10"
+      - "traefik.http.routers.utils4dev-web.entrypoints=websecure"
+      - "traefik.http.routers.utils4dev-web.tls=true"
+      - "traefik.http.routers.utils4dev-web.tls.certresolver=letsencrypt"
 
 volumes:
   postgres_data:
@@ -61,3 +75,5 @@ volumes:
 networks:
   utils4dev-network:
     driver: bridge
+  traefik-proxy:
+    external: true
