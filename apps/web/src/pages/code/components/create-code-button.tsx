@@ -31,6 +31,7 @@ import { Languages } from "@src/constants/languages";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
+import { useAuthContext } from "@src/global-context/auth/hook";
 
 const formSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório"),
@@ -48,13 +49,17 @@ type CreateCodeButtonProps = {
 };
 
 export function CreateCodeButton({ className }: CreateCodeButtonProps) {
+  // Hooks
   const navigate = useNavigate();
+  const user = useAuthContext();
 
   const { isPending, mutateAsync: createCode } = useCreateCode();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     disabled: isPending,
   });
+
+  if (user.isLoading || user.user === null) return <></>;
 
   async function handleSubmit({ name, language, isPrivate }: FormValues) {
     const { id } = await createCode({
