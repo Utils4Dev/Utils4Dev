@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "dev:environment": "docker compose -f docker-compose.dev.yml up -d",
     "dev": "turbo dev",
     "build": "turbo build"
   },

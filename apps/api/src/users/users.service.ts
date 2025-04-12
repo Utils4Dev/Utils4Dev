@@ -61,7 +61,6 @@ export class UsersService {
       },
     );
 
-    console.log('User created', result);
     return UserDto.fromEntity(result);
   }
 }

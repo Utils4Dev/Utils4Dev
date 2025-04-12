@@ -1,4 +1,5 @@
 import { useFindCodeByIdSuspense } from "@src/api/code/code";
+import { CodeReactions } from "@src/components/code-reactions";
 import { SyntaxHighlighter } from "@src/components/syntax-highlighter";
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar";
 import { Badge } from "@src/components/ui/badge";
@@ -105,6 +106,8 @@ export function CodeDetailsPage() {
 
         <CardFooter className="bg-muted/50 flex flex-wrap items-center justify-between gap-4 border-t px-6 py-6">
           <div className="flex items-center space-x-4">
+            <CodeReactions codeId={codeId!} reactions={code.reactions} />
+
             {code.createdAt && (
               <div className="text-muted-foreground flex items-center text-sm">
                 <CalendarIcon className="mr-1 h-3 w-3" />

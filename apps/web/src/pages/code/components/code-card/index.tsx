@@ -1,4 +1,5 @@
-import { CodeDto } from "@src/api/models";
+import { CodeWithReactionsDto } from "@src/api/models";
+import { CodeReactions } from "@src/components/code-reactions";
 import { SyntaxHighlighter } from "@src/components/syntax-highlighter";
 import { Badge } from "@src/components/ui/badge";
 import {
@@ -13,7 +14,7 @@ import { cn } from "@src/lib/utils";
 import { isLightColor } from "@src/utils/is-light-color";
 
 type CodeCardProps = {
-  code: CodeDto;
+  code: CodeWithReactionsDto;
 };
 
 export function CodeCard({ code }: CodeCardProps) {
@@ -46,19 +47,9 @@ export function CodeCard({ code }: CodeCardProps) {
           <span title={code.author.name} className="max-w-[120px] truncate">
             {code.author.name}
           </span>
-          {/* <Button
-            variant="ghost"
-            size="sm"
-            className="flex h-6 items-center gap-1 px-2"
-            onClick={handleLike}
-          >
-            <Heart
-              size={12}
-              className={cn(liked ? "fill-current text-red-500" : "")}
-            />
-            <span>{likes}</span>
-          </Button> */}
         </div>
+
+        <CodeReactions codeId={code.id} reactions={code.reactions} />
       </CardFooter>
     </Card>
   );

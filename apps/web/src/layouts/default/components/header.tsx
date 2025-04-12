@@ -7,7 +7,7 @@ import { Link } from "react-router";
 
 type HeaderProps = Omit<ComponentProps<"header">, "children">;
 export function Header({ className, ...props }: HeaderProps) {
-  const { user, logout } = useAuthContext();
+  const { authenticatedUser, logout } = useAuthContext();
 
   return (
     <header className={cn("flex border-b p-3", className)} {...props}>
@@ -17,8 +17,12 @@ export function Header({ className, ...props }: HeaderProps) {
         </h1>
       </Link>
 
-      {user ? (
-        <UserInfo user={user} onLogout={logout} className="ml-auto" />
+      {authenticatedUser ? (
+        <UserInfo
+          user={authenticatedUser}
+          onLogout={logout}
+          className="ml-auto"
+        />
       ) : (
         <LoginButton className="ml-auto" />
       )}

@@ -38,7 +38,7 @@ const formSchema = z.object({
     required_error: "Linguagem é obrigatória",
     invalid_type_error: "Linguagem inválida",
   }),
-  isPrivate: z.boolean().default(true),
+  isPrivate: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -138,6 +138,7 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
             <FormField
               control={form.control}
               name="isPrivate"
+              defaultValue={false}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Privado</FormLabel>

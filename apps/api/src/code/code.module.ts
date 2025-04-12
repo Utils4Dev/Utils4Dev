@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CodeController } from './code.controller';
 import { CodeService } from './code.service';
 import { Code } from './entities/code.entity';
+import { CodeReaction } from './entities/code-reaction.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Code])],
+  imports: [TypeOrmModule.forFeature([Code, CodeReaction])],
   controllers: [CodeController],
   providers: [CodeService],
 })

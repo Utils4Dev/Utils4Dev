@@ -15,7 +15,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
       retry: false,
     },
   });
-  const user = data || null;
+  const authenticatedUser = data || null;
 
   const { refetch: logoutQuery } = useLogout({ query: { enabled: false } });
 
@@ -39,7 +39,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
     );
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, logout }}>
+    <AuthContext.Provider value={{ authenticatedUser, isLoading, logout }}>
       {children}
     </AuthContext.Provider>
   );

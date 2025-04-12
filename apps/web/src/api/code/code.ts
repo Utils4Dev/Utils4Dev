@@ -27,7 +27,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AddCodeReactionDto,
   CodeDto,
+  CodeWithReactionsDto,
   CreateCodeDto,
   FindAllPublicCodesParams,
   FindMyCodesParams,
@@ -105,7 +107,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 ) => {
       
       
-      return instance<CodeDto[]>(
+      return instance<CodeWithReactionsDto[]>(
       {url: `/codes`, method: 'GET',
         params, signal
     },
@@ -238,7 +240,7 @@ export const findMyCodes = (
 ) => {
       
       
-      return instance<CodeDto[]>(
+      return instance<CodeWithReactionsDto[]>(
       {url: `/codes/my-codes`, method: 'GET',
         params, signal
     },
@@ -371,7 +373,7 @@ export const findCodeById = (
 ) => {
       
       
-      return instance<CodeDto>(
+      return instance<CodeWithReactionsDto>(
       {url: `/codes/${id}`, method: 'GET', signal
     },
       options);
@@ -497,13 +499,13 @@ export function useFindCodeByIdSuspense<TData = Awaited<ReturnType<typeof findCo
 
 
 
-export const updateCode = (
+export const updateCodeById = (
     id: string,
     updateCodeDto: UpdateCodeDto,
  options?: SecondParameter<typeof instance>,) => {
       
       
-      return instance<void>(
+      return instance<CodeDto>(
       {url: `/codes/${id}`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
       data: updateCodeDto
@@ -513,11 +515,11 @@ export const updateCode = (
   
 
 
-export const getUpdateCodeMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCode>>, TError,{id: string;data: UpdateCodeDto}, TContext>, request?: SecondParameter<typeof instance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateCode>>, TError,{id: string;data: UpdateCodeDto}, TContext> => {
+export const getUpdateCodeByIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCodeById>>, TError,{id: string;data: UpdateCodeDto}, TContext>, request?: SecondParameter<typeof instance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateCodeById>>, TError,{id: string;data: UpdateCodeDto}, TContext> => {
     
-const mutationKey = ['updateCode'];
+const mutationKey = ['updateCodeById'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -527,10 +529,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCode>>, {id: string;data: UpdateCodeDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCodeById>>, {id: string;data: UpdateCodeDto}> = (props) => {
           const {id,data} = props ?? {};
 
-          return  updateCode(id,data,requestOptions)
+          return  updateCodeById(id,data,requestOptions)
         }
 
         
@@ -538,20 +540,20 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type UpdateCodeMutationResult = NonNullable<Awaited<ReturnType<typeof updateCode>>>
-    export type UpdateCodeMutationBody = UpdateCodeDto
-    export type UpdateCodeMutationError = unknown
+    export type UpdateCodeByIdMutationResult = NonNullable<Awaited<ReturnType<typeof updateCodeById>>>
+    export type UpdateCodeByIdMutationBody = UpdateCodeDto
+    export type UpdateCodeByIdMutationError = unknown
 
-    export const useUpdateCode = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCode>>, TError,{id: string;data: UpdateCodeDto}, TContext>, request?: SecondParameter<typeof instance>}
+    export const useUpdateCodeById = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCodeById>>, TError,{id: string;data: UpdateCodeDto}, TContext>, request?: SecondParameter<typeof instance>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateCode>>,
+        Awaited<ReturnType<typeof updateCodeById>>,
         TError,
         {id: string;data: UpdateCodeDto},
         TContext
       > => {
 
-      const mutationOptions = getUpdateCodeMutationOptions(options);
+      const mutationOptions = getUpdateCodeByIdMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
@@ -607,6 +609,120 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
 
       const mutationOptions = getDeleteCodeByIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const addReactionToCodeById = (
+    id: string,
+    addCodeReactionDto: AddCodeReactionDto,
+ options?: SecondParameter<typeof instance>,signal?: AbortSignal
+) => {
+      
+      
+      return instance<void>(
+      {url: `/codes/${id}/reaction`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: addCodeReactionDto, signal
+    },
+      options);
+    }
+  
+
+
+export const getAddReactionToCodeByIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addReactionToCodeById>>, TError,{id: string;data: AddCodeReactionDto}, TContext>, request?: SecondParameter<typeof instance>}
+): UseMutationOptions<Awaited<ReturnType<typeof addReactionToCodeById>>, TError,{id: string;data: AddCodeReactionDto}, TContext> => {
+    
+const mutationKey = ['addReactionToCodeById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addReactionToCodeById>>, {id: string;data: AddCodeReactionDto}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  addReactionToCodeById(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddReactionToCodeByIdMutationResult = NonNullable<Awaited<ReturnType<typeof addReactionToCodeById>>>
+    export type AddReactionToCodeByIdMutationBody = AddCodeReactionDto
+    export type AddReactionToCodeByIdMutationError = unknown
+
+    export const useAddReactionToCodeById = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addReactionToCodeById>>, TError,{id: string;data: AddCodeReactionDto}, TContext>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof addReactionToCodeById>>,
+        TError,
+        {id: string;data: AddCodeReactionDto},
+        TContext
+      > => {
+
+      const mutationOptions = getAddReactionToCodeByIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const removeReactionToCodeById = (
+    id: string,
+ options?: SecondParameter<typeof instance>,) => {
+      
+      
+      return instance<void>(
+      {url: `/codes/${id}/reaction`, method: 'DELETE'
+    },
+      options);
+    }
+  
+
+
+export const getRemoveReactionToCodeByIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeReactionToCodeById>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof instance>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeReactionToCodeById>>, TError,{id: string}, TContext> => {
+    
+const mutationKey = ['removeReactionToCodeById'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeReactionToCodeById>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  removeReactionToCodeById(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveReactionToCodeByIdMutationResult = NonNullable<Awaited<ReturnType<typeof removeReactionToCodeById>>>
+    
+    export type RemoveReactionToCodeByIdMutationError = unknown
+
+    export const useRemoveReactionToCodeById = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeReactionToCodeById>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removeReactionToCodeById>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getRemoveReactionToCodeByIdMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

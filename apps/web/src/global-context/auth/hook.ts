@@ -2,7 +2,7 @@ import { UserDto } from "@src/api/models";
 import { createContext, useContext } from "react";
 
 type AuthContext = {
-  user: UserDto | null;
+  authenticatedUser: UserDto | null;
   isLoading: boolean;
   logout: () => Promise<void>;
 };

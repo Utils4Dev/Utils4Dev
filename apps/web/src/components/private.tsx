@@ -9,8 +9,8 @@ export function Private({
   fallback,
   children,
 }: PropsWithChildren<PrivateProps>) {
-  const { user } = useAuthContext();
+  const { authenticatedUser } = useAuthContext();
 
-  if (!user) return <>{fallback}</>;
+  if (!authenticatedUser) return <>{fallback}</>;
   else return <>{children}</>;
 }

@@ -18,7 +18,6 @@ async function bootstrap() {
 
   const url = DOMAIN_URL ? new URL(DOMAIN_URL) : null;
   const pathPrefix = url ? url.pathname : '';
-  console.log(pathPrefix);
 
   if (pathPrefix) {
     app.setGlobalPrefix(pathPrefix);

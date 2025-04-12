@@ -17,6 +17,7 @@ export class CodeDto {
 
   static fromEntity(entity: Code): CodeDto {
     const dto = new CodeDto();
+
     dto.id = entity.id;
     dto.createdAt = entity.createdAt;
     dto.updatedAt = entity.updatedAt;
@@ -25,6 +26,7 @@ export class CodeDto {
     dto.content = entity.content;
     dto.private = entity.private;
     dto.author = UserDto.fromEntity(entity.authorUser);
+
     return dto;
   }
 }

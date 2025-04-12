@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useDeleteCodeById,
   useFindCodeByIdSuspense,
-  useUpdateCode,
+  useUpdateCodeById,
 } from "@src/api/code/code";
 import { CodeEditor } from "@src/components/code-editor";
 import { Loading } from "@src/components/loading";
@@ -44,7 +44,7 @@ export function CodeEditPage() {
     isRefetching,
   } = useFindCodeByIdSuspense(codeId!);
   const { mutateAsync: updateCode, isPending: isUpdatePending } =
-    useUpdateCode();
+    useUpdateCodeById();
   const { mutateAsync: deleteCode, isPending: isDeletePending } =
     useDeleteCodeById();
 
@@ -69,6 +69,9 @@ export function CodeEditPage() {
         },
       });
       await findCodeByIdRefetch();
+      await queryClient.invalidateQueries({
+        queryKey: ["/codes"],
+      });
     } catch (error) {
       console.error(error);
       toast.error("Erro ao atualizar o código");

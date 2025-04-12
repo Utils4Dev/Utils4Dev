@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CodeLanguage } from '../enum/code-language.enum';
 import { User } from 'src/users/entities/user.entity';
+import { CodeReaction } from './code-reaction.entity';
 
 @Entity()
 export class Code {
@@ -34,4 +36,7 @@ export class Code {
 
   @ManyToOne(() => User, (user) => user.codes)
   authorUser: User;
+
+  @OneToMany(() => CodeReaction, (reaction) => reaction.code)
+  reactions: CodeReaction[];
 }
