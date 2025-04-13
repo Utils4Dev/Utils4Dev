@@ -17,4 +17,9 @@ export const Languages: Record<CodeLanguage, LanguageInfo> = {
     color: "#f1e05a",
     extension: "js",
   },
+  GraphQL: {
+    name: "GraphQL",
+    color: "#e535ab",
+    extension: "graphql",
+  },
 };

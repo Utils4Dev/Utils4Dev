@@ -12,4 +12,5 @@ export type FindAllPublicCodesLanguageItem = typeof FindAllPublicCodesLanguageIt
 export const FindAllPublicCodesLanguageItem = {
   TypeScript: 'TypeScript',
   JavaScript: 'JavaScript',
+  GraphQL: 'GraphQL',
 } as const;
