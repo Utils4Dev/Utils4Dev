@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateCode } from "@src/api/code/code";
 import { CodeLanguage } from "@src/api/models";
+import { CodeEditor } from "@src/components/code-editor";
 import { Button } from "@src/components/ui/button";
 import {
   Dialog,
@@ -28,8 +29,10 @@ import {
 } from "@src/components/ui/select";
 import { Switch } from "@src/components/ui/switch";
 import { Languages } from "@src/constants/languages";
+import { useAuthContext } from "@src/global-context/auth/hook";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -39,6 +42,7 @@ const formSchema = z.object({
     invalid_type_error: "Linguagem inválida",
   }),
   isPrivate: z.boolean(),
+  code: z.string().nonempty("Código é obrigatório"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -48,33 +52,44 @@ type CreateCodeButtonProps = {
 };
 
 export function CreateCodeButton({ className }: CreateCodeButtonProps) {
+  // Hooks
   const navigate = useNavigate();
+  const user = useAuthContext();
+  const [isOpen, setIsOpen] = useState(false);
 
   const { isPending, mutateAsync: createCode } = useCreateCode();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     disabled: isPending,
+    defaultValues: {
+      isPrivate: true,
+      code: "",
+    },
   });
 
-  async function handleSubmit({ name, language, isPrivate }: FormValues) {
+  if (user.isLoading || user.authenticatedUser === null) return null;
+
+  async function handleSubmit({ name, language, isPrivate, code }: FormValues) {
     const { id } = await createCode({
       data: {
         language,
         name,
         private: isPrivate,
+        content: code,
       },
     });
 
-    navigate(`/codes/${id}/edit`);
+    setIsOpen(false);
+    navigate(`/codes/${id}`);
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className={className}>Compartilhe seu utilitário</Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="h-[80vh] min-w-4xl">
         <DialogHeader>
           <DialogTitle>Crie seu utilitário</DialogTitle>
           <DialogDescription>
@@ -86,67 +101,94 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="flex flex-col gap-4"
+            className="flex h-full flex-1 flex-col gap-4"
           >
-            {/* Nome */}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Linguagem */}
-            <FormField
-              control={form.control}
-              name="language"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Linguagem</FormLabel>
-                  <Select
-                    disabled={isPending}
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
+            <div className="flex items-start gap-4">
+              {/* Nome */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Linguagem */}
+              <FormField
+                control={form.control}
+                name="language"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Linguagem</FormLabel>
+                    <FormControl>
+                      <Select
+                        disabled={isPending}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {Object.entries(Languages).map(
+                            ([language, { name }]) => (
+                              <SelectItem key={language} value={language}>
+                                {name}
+                              </SelectItem>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
 
-                    <SelectContent>
-                      {Object.entries(Languages).map(([language, { name }]) => (
-                        <SelectItem key={language} value={language}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Privado */}
+              {/* Privado */}
+              <FormField
+                control={form.control}
+                name="isPrivate"
+                render={({ field }) => (
+                  <FormItem className="mt-8">
+                    <div className="flex items-center gap-2">
+                      <FormControl>
+                        <Switch
+                          disabled={isPending}
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel className="m-0">Privado</FormLabel>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Editor de Código */}
             <FormField
               control={form.control}
-              name="isPrivate"
-              defaultValue={false}
+              name="code"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Privado</FormLabel>
+                <FormItem className="flex-1">
+                  <FormLabel>Código</FormLabel>
                   <FormControl>
-                    <Switch
-                      disabled={isPending}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+                    <CodeEditor
+                      language={form.watch("language") || "JavaScript"}
+                      value={field.value}
+                      onChange={field.onChange}
+                      options={{ automaticLayout: true }}
+                      className="h-full min-h-[300px]"
                     />
                   </FormControl>
                   <FormMessage />

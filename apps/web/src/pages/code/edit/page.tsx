@@ -69,9 +69,11 @@ export function CodeEditPage() {
         },
       });
       await findCodeByIdRefetch();
+      toast.success("Código atualizado com sucesso");
       await queryClient.invalidateQueries({
         queryKey: ["/codes"],
       });
+      navigate(`/codes/${codeId}`);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao atualizar o código");
