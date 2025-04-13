@@ -139,6 +139,7 @@ export function CodeEditPage() {
       });
       await findCodeByIdRefetch();
       toast.success("Código atualizado com sucesso");
+      navigate(`/codes/${codeId}`);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao atualizar o código");
@@ -147,7 +148,8 @@ export function CodeEditPage() {
 
   // Cálculos para os indicadores visuais
   const isKeywordsLimitReached = keywordsCount >= MAX_KEYWORDS_COUNT;
-  const isDescriptionNearLimit = descriptionLength > MAX_DESCRIPTION_LENGTH * 0.9;
+  const isDescriptionNearLimit =
+    descriptionLength > MAX_DESCRIPTION_LENGTH * 0.9;
 
   async function handleDelete() {
     if (!isConfirmingDelete) {
