@@ -1,0 +1,61 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22.9.0"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      # - name: Lint
+      #   run: npm run lint
+
+      # - name: Testes
+      #   run: npm test
+
+      - name: Build
+        run: npm run build
+
+  cd-prod:
+    name: Deploy para Produção
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configurar chave SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Configurar known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        run: |
+          echo "Iniciando deploy via SSH para o ambiente de produção..."
+          # Executar comandos no servidor remoto
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd ${{ secrets.REMOTE_PATH }} && 
+            echo "Atualizando código do repositório..." &&
+            git pull origin master &&
+            echo "Reconstruindo e iniciando containers Docker..." &&
+            docker compose up -d --build &&
+            echo "Deploy concluído com sucesso em $(date)"
+          '
