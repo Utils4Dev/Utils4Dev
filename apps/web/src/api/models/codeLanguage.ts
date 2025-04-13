@@ -12,4 +12,5 @@ export type CodeLanguage = typeof CodeLanguage[keyof typeof CodeLanguage];
 export const CodeLanguage = {
   TypeScript: 'TypeScript',
   JavaScript: 'JavaScript',
+  GraphQL: 'GraphQL',
 } as const;
