@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateCode } from "@src/api/code/code";
 import { CodeLanguage } from "@src/api/models";
+import { ExtendedCreateCodeDto } from "@src/api/models/extended-types";
 import { CodeEditor } from "@src/components/code-editor";
 import { Button } from "@src/components/ui/button";
 import {
@@ -18,6 +19,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@src/components/ui/form";
 import { Input } from "@src/components/ui/input";
 import {
@@ -28,12 +30,16 @@ import {
   SelectValue,
 } from "@src/components/ui/select";
 import { Switch } from "@src/components/ui/switch";
+import { Textarea } from "@src/components/ui/textarea";
 import { Languages } from "@src/constants/languages";
 import { useAuthContext } from "@src/global-context/auth/hook";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
+
+const MAX_DESCRIPTION_LENGTH = 250;
+const MAX_KEYWORDS_COUNT = 5;
 
 const formSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório"),
@@ -43,6 +49,22 @@ const formSchema = z.object({
   }),
   isPrivate: z.boolean().default(true),
   code: z.string().nonempty("Código é obrigatório"),
+  keywords: z
+    .string()
+    .refine(
+      (val) =>
+        val === "" ||
+        val.split(",").filter(Boolean).length <= MAX_KEYWORDS_COUNT,
+      `Limite máximo de ${MAX_KEYWORDS_COUNT} palavras-chave`,
+    )
+    .optional(),
+  description: z
+    .string()
+    .max(
+      MAX_DESCRIPTION_LENGTH,
+      `A descrição deve ter no máximo ${MAX_DESCRIPTION_LENGTH} caracteres`,
+    )
+    .optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -56,6 +78,8 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
   const navigate = useNavigate();
   const user = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
+  const [keywordsCount, setKeywordsCount] = useState(0);
+  const [descriptionLength, setDescriptionLength] = useState(0);
 
   const { isPending, mutateAsync: createCode } = useCreateCode();
   const form = useForm<FormValues>({
@@ -64,24 +88,69 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
     defaultValues: {
       isPrivate: true,
       code: "",
+      keywords: "",
+      description: "",
     },
   });
 
+  // Monitorar e atualizar contagem de palavras-chave
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "keywords") {
+        const keywordsValue = value.keywords || "";
+        const count =
+          keywordsValue === ""
+            ? 0
+            : keywordsValue.split(",").filter((k) => k.trim()).length;
+        setKeywordsCount(count);
+      }
+
+      if (name === "description") {
+        setDescriptionLength((value.description || "").length);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
+
   if (user.isLoading || user.user === null) return <></>;
 
-  async function handleSubmit({ name, language, isPrivate, code }: FormValues) {
+  async function handleSubmit({
+    name,
+    language,
+    isPrivate,
+    code,
+    keywords,
+    description,
+  }: FormValues) {
+    // Converte a string de palavras-chave em um array
+    const keywordsArray = keywords
+      ? keywords
+          .split(",")
+          .map((k) => k.trim())
+          .filter(Boolean)
+          .slice(0, MAX_KEYWORDS_COUNT)
+      : [];
+
     const { id } = await createCode({
       data: {
         language,
         name,
         private: isPrivate,
         content: code,
-      },
+        keywords: keywordsArray,
+        description: description?.slice(0, MAX_DESCRIPTION_LENGTH),
+      } as ExtendedCreateCodeDto,
     });
 
     setIsOpen(false);
     navigate(`/codes/${id}`);
   }
+
+  // Cálculos para os indicadores visuais
+  const isKeywordsLimitReached = keywordsCount >= MAX_KEYWORDS_COUNT;
+  const isDescriptionNearLimit =
+    descriptionLength > MAX_DESCRIPTION_LENGTH * 0.9;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -101,7 +170,7 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="flex h-full flex-1 flex-col gap-4"
+            className="flex h-full flex-1 flex-col gap-4 overflow-y-auto"
           >
             <div className="flex items-start gap-4">
               {/* Nome */}
@@ -174,6 +243,63 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
                 )}
               />
             </div>
+
+            {/* Palavras-chave */}
+            <FormField
+              control={form.control}
+              name="keywords"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Palavras-chave (separadas por vírgula)</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="ex: javascript, promise, async, util"
+                    />
+                  </FormControl>
+                  <FormDescription className="flex justify-end text-xs">
+                    <span
+                      className={`${isKeywordsLimitReached ? "font-medium text-red-500" : ""}`}
+                    >
+                      {keywordsCount}/{MAX_KEYWORDS_COUNT}
+                    </span>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Descrição */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Uma breve descrição do seu código e como ele pode ajudar outras pessoas"
+                      className="resize-none"
+                      rows={3}
+                      maxLength={MAX_DESCRIPTION_LENGTH}
+                    />
+                  </FormControl>
+                  <FormDescription className="flex justify-end text-xs">
+                    <span
+                      className={
+                        isDescriptionNearLimit
+                          ? "font-medium text-yellow-600"
+                          : ""
+                      }
+                    >
+                      {descriptionLength}/{MAX_DESCRIPTION_LENGTH}
+                    </span>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Editor de Código */}
             <FormField
