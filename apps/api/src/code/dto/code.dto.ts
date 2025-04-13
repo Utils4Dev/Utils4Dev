@@ -10,6 +10,8 @@ export class CodeDto {
   name: string;
   content: string;
   private: boolean;
+  keywords: string[];
+  description: string;
   author: UserDto;
 
   @ApiProperty({ enum: CodeLanguage, enumName: 'CodeLanguage' })
@@ -24,6 +26,8 @@ export class CodeDto {
     dto.language = entity.language;
     dto.content = entity.content;
     dto.private = entity.private;
+    dto.keywords = entity.keywords || [];
+    dto.description = entity.description || '';
     dto.author = UserDto.fromEntity(entity.authorUser);
     return dto;
   }

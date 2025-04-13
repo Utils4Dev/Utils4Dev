@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
@@ -22,4 +23,19 @@ export class CreateCodeDto {
 
   @IsBoolean()
   private: boolean;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @ApiProperty({
+    type: [String],
+    required: false,
+    example: ['javascript', 'snippet', 'util'],
+  })
+  keywords?: string[];
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ required: false })
+  description?: string;
 }
