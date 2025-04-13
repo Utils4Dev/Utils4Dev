@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { GithubProvider } from '../entities/github-provider.entity';
 import { Code } from 'src/code/entities/code.entity';
-import { Comment } from '@src/code/entities/comment.entity';
+import { Comment } from 'src/code/entities/comment.entity';
 
 @Entity()
 export class User {
