@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { In, ILike, Repository } from 'typeorm';
 import { CodeFilterWithAuthorIdDto } from './dto/code-filter-with-author-id.dto';
 import { CodeFilterDto } from './dto/code-filter.dto';
 import { CodeDto } from './dto/code.dto';
@@ -34,7 +34,7 @@ export class CodeService {
       where: {
         private: false,
         language: filter?.language ? In(filter.language) : undefined,
-        name: filter?.name ? Like(`%${filter.name}%`) : undefined,
+        name: filter?.name ? ILike(`%${filter.name}%`) : undefined,
         authorUser: filter?.authorId ? { id: filter.authorId } : undefined,
       },
     });
@@ -54,7 +54,7 @@ export class CodeService {
       relations: { authorUser: true },
       where: {
         language: filter?.language ? In(filter.language) : undefined,
-        name: filter?.name ? Like(`%${filter.name}%`) : undefined,
+        name: filter?.name ? ILike(`%${filter.name}%`) : undefined,
         authorUser: { id: authorId },
       },
     });
