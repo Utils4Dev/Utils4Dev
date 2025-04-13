@@ -23,6 +23,7 @@ import {
   CopyIcon,
   DownloadIcon,
   PencilIcon,
+  TagIcon,
 } from "lucide-react";
 import { DateTime } from "luxon";
 import { useParams, useNavigate } from "react-router";
