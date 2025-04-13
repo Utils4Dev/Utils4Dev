@@ -20,9 +20,6 @@ const {
   POSTGRES_DB,
 } = process.env;
 
-// Com tsconfig-paths registrado, as importações com @ devem funcionar
-console.log('entities', join(__dirname, '..', '**', '*.entity.{ts,js}'));
-
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: POSTGRES_HOST,

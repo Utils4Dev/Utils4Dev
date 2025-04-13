@@ -5,7 +5,7 @@ import * as cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import { AppModule } from './app.module';
 
-const { WEB_URL, PORT = '3000' } = process.env;
+const { WEB_URL, DOMAIN_URL, PORT = '3000' } = process.env;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -15,6 +15,15 @@ async function bootstrap() {
       credentials: true,
     },
   });
+
+  const url = DOMAIN_URL ? new URL(DOMAIN_URL) : null;
+  const pathPrefix = url ? url.pathname : '';
+  console.log(pathPrefix);
+
+  if (pathPrefix) {
+    app.setGlobalPrefix(pathPrefix);
+  }
+
   app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
@@ -30,12 +39,17 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Utils4Dev')
     .setVersion('1.0')
+    .addServer(DOMAIN_URL, 'Base URL')
     .build();
+
   const documentFactory = () =>
     SwaggerModule.createDocument(app, config, {
+      ignoreGlobalPrefix: true,
       operationIdFactory: (_, methodKey) => methodKey,
     });
-  SwaggerModule.setup('docs', app, documentFactory, {
+
+  SwaggerModule.setup('/docs', app, documentFactory, {
+    useGlobalPrefix: true,
     jsonDocumentUrl: '/docs/json',
   });
 
