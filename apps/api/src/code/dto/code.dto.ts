@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserDto } from 'src/users/dto/user.dto';
 import { Code } from '../entities/code.entity';
 import { CodeLanguage } from '../enum/code-language.enum';
+import { Comment } from '../entities/comment.entity';
 
 export class CodeDto {
   id: string;

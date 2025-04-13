@@ -22,6 +22,8 @@ import { CodeFilterWithAuthorIdDto } from './dto/code-filter-with-author-id.dto'
 import { CodeFilterDto } from './dto/code-filter.dto';
 import { CreateCodeDto } from './dto/create-code.dto';
 import { UpdateCodeDto } from './dto/update-code.dto';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { CommentDto } from './dto/comment.dto';
 
 @Controller('codes')
 export class CodeController {
@@ -109,6 +111,21 @@ export class CodeController {
 
   @Delete(':id')
   deleteCodeById(@Param('id') id: string) {
-    return this.codeService.remove(id);
+    return this.codeService.removeCodeById(id);
+  }
+
+  @Post(':id/comments')
+  @UseGuards(JwtAuthGuard)
+  async addCommentToCode(
+    @Param('id') codeId: string,
+    @Body() createCommentDto: CreateCommentDto,
+    @AuthUser() user: UserDto,
+  ): Promise<CommentDto> {
+    return this.codeService.addCommentToCode(codeId, user.id, createCommentDto);
+  }
+
+  @Get(':id/comments')
+  async commentsByCodeId(@Param('id') codeId: string): Promise<CommentDto[]> {
+    return this.codeService.getCommentsByCodeId(codeId);
   }
 }

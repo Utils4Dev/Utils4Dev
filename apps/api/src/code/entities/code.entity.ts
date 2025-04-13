@@ -10,6 +10,7 @@ import {
 import { CodeLanguage } from '../enum/code-language.enum';
 import { User } from 'src/users/entities/user.entity';
 import { CodeReaction } from './code-reaction.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
 export class Code {
@@ -39,4 +40,7 @@ export class Code {
 
   @OneToMany(() => CodeReaction, (reaction) => reaction.code)
   reactions: CodeReaction[];
+
+  @OneToMany(() => Comment, (comment) => comment.code)
+  comments: Comment[];
 }

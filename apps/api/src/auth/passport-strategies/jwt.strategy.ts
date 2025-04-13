@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: cookieExtractor,
       ignoreExpiration: false,
-      secretOrKey: JWT_SECRET!,
+      secretOrKey: JWT_SECRET,
     });
   }
 

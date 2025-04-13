@@ -5,8 +5,6 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface UpdateCodeDto {
-  name?: string;
-  content?: string;
-  private?: boolean;
+export interface CreateCommentDto {
+  content: string;
 }

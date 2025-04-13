@@ -11,6 +11,9 @@ import { Code } from './entities/code.entity';
 import { truncateCodeContent } from './utils/truncate-code-content';
 import { ReactionType } from './enum/reaction-type.enum';
 import { CodeReaction } from './entities/code-reaction.entity';
+import { Comment } from './entities/comment.entity';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { CommentDto } from './dto/comment.dto';
 
 @Injectable()
 export class CodeService {
@@ -20,6 +23,8 @@ export class CodeService {
     private codeRepository: Repository<Code>,
     @InjectRepository(CodeReaction)
     private codeReactionRepository: Repository<CodeReaction>,
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
   ) {}
 
   async create(createCodeDto: CreateCodeDto, userId: string): Promise<CodeDto> {
@@ -126,7 +131,32 @@ export class CodeService {
     });
   }
 
-  remove(id: string) {
+  async addCommentToCode(
+    codeId: string,
+    userId: string,
+    createCommentDto: CreateCommentDto,
+  ): Promise<CommentDto> {
+    const comment = this.commentRepository.create({
+      content: createCommentDto.content,
+      code: { id: codeId },
+      author: { id: userId },
+    });
+
+    await this.commentRepository.save(comment);
+    return CommentDto.fromEntity(comment);
+  }
+
+  async getCommentsByCodeId(codeId: string): Promise<CommentDto[]> {
+    const comments = await this.commentRepository.find({
+      where: { code: { id: codeId } },
+      order: { createdAt: 'DESC' },
+      relations: ['author'],
+    });
+
+    return comments.map((c) => CommentDto.fromEntity(c));
+  }
+
+  removeCodeById(id: string) {
     return this.codeRepository.delete(id);
   }
 }

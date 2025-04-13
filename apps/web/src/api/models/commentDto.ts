@@ -4,16 +4,11 @@
  * Utils4Dev
  * OpenAPI spec version: 1.0
  */
-import type { CodeLanguage } from './codeLanguage';
 import type { UserDto } from './userDto';
 
-export interface CodeDto {
-  language: CodeLanguage;
+export interface CommentDto {
   id: string;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
   content: string;
-  private: boolean;
+  createdAt: string;
   author: UserDto;
 }

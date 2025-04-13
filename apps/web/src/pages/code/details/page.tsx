@@ -20,6 +20,7 @@ import { CalendarIcon, ClockIcon, CopyIcon, DownloadIcon } from "lucide-react";
 import { DateTime } from "luxon";
 import { useParams } from "react-router";
 import { toast } from "sonner";
+import { CommentsSection } from "@src/components/comments-section";
 
 export function CodeDetailsPage() {
   const { codeId } = useParams();
@@ -49,7 +50,7 @@ export function CodeDetailsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto space-y-4 py-8">
       <Card className="border pb-0 shadow-md">
         <CardHeader>
           <div className="flex flex-col space-y-4">
@@ -137,6 +138,8 @@ export function CodeDetailsPage() {
           </div>
         </CardFooter>
       </Card>
+
+      <CommentsSection codeId={code.id} />
     </div>
   );
 }
