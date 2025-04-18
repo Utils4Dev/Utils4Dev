@@ -12,20 +12,30 @@ import {
   CardTitle,
 } from "@src/components/ui/card";
 import { Languages } from "@src/constants/languages";
+import { useAuthContext } from "@src/global-context/auth/hook";
 import { cn } from "@src/lib/utils";
 import { downloadFile } from "@src/utils/download-file";
 import { isLightColor } from "@src/utils/is-light-color";
 import { kebabCase } from "@src/utils/kebab-case";
-import { CalendarIcon, ClockIcon, CopyIcon, DownloadIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ClockIcon,
+  CopyIcon,
+  DownloadIcon,
+  PencilIcon,
+} from "lucide-react";
 import { DateTime } from "luxon";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { CommentsSection } from "@src/components/comments-section";
 
 export function CodeDetailsPage() {
   const { codeId } = useParams();
+  const navigate = useNavigate();
+  const user = useAuthContext();
   const { data: code } = useFindCodeByIdSuspense(codeId!);
   const languageInfo = Languages[code.language];
+  const isOwner = user.user?.id === code.author.id;
 
   function copyToClipboard() {
     navigator.clipboard.writeText(code.content);
@@ -33,16 +43,14 @@ export function CodeDetailsPage() {
   }
 
   function downloadCode() {
-    // Usar a extensão do arquivo definida em Languages
     const filename = `${kebabCase(code.name || "codigo")}.${languageInfo.extension}`;
-
-    // Criar um arquivo File com o conteúdo do código
     const file = new File([code.content], filename, { type: "text/plain" });
-
-    // Usar o utilitário de download
     downloadFile(file);
-
     toast.success("Código baixado com sucesso");
+  }
+
+  function handleEdit() {
+    navigate(`/codes/${codeId}/edit`);
   }
 
   function formatRelativeTime(dateString: string) {
@@ -80,6 +88,18 @@ export function CodeDetailsPage() {
                   <DownloadIcon className="h-4 w-4" />
                   <span>Download</span>
                 </Button>
+                {isOwner && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleEdit}
+                    className="flex items-center gap-1"
+                    title="Editar código"
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                    <span>Editar</span>
+                  </Button>
+                )}
               </div>
             </div>
 

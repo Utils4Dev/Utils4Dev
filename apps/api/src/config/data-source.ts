@@ -12,7 +12,6 @@ tsConfigPaths.register({
 });
 
 const {
-  NODE_ENV,
   POSTGRES_HOST,
   POSTGRES_PORT,
   POSTGRES_USER,
@@ -29,7 +28,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: POSTGRES_DB,
   entities: [join(__dirname, '..', '**', '*.entity.{ts,js}')],
   migrations: [join(__dirname, '..', 'migrations', '*.{ts,js}')],
-  synchronize: NODE_ENV === 'local',
+  // synchronize: NODE_ENV === 'local',
 };
 
 const dataSource = new DataSource(dataSourceOptions);

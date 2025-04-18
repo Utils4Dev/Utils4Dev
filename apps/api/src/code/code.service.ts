@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Like, Repository } from 'typeorm';
+import { In, ILike, Repository, DataSource } from 'typeorm';
 import { CodeFilterWithAuthorIdDto } from './dto/code-filter-with-author-id.dto';
 import { CodeFilterDto } from './dto/code-filter.dto';
 import { CodeWithReactionsDto } from './dto/code-with-reactions.dto';
@@ -47,9 +47,9 @@ export class CodeService {
       relations: { authorUser: true, reactions: { user: true } },
       where: {
         private: false,
-        language: filter.language ? In(filter.language) : undefined,
-        name: filter.name ? Like(`%${filter.name}%`) : undefined,
-        authorUser: filter.authorId ? { id: filter.authorId } : undefined,
+        language: filter?.language ? In(filter.language) : undefined,
+        name: filter?.name ? ILike(`%${filter.name}%`) : undefined,
+        authorUser: filter?.authorId ? { id: filter.authorId } : undefined,
       },
     });
 
@@ -69,7 +69,7 @@ export class CodeService {
       relations: { authorUser: true, reactions: { user: true } },
       where: {
         language: filter?.language ? In(filter.language) : undefined,
-        name: filter?.name ? Like(`%${filter.name}%`) : undefined,
+        name: filter?.name ? ILike(`%${filter.name}%`) : undefined,
         authorUser: { id: authorId },
       },
     });

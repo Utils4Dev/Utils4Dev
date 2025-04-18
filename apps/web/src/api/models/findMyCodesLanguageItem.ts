@@ -12,4 +12,5 @@ export type FindMyCodesLanguageItem = typeof FindMyCodesLanguageItem[keyof typeo
 export const FindMyCodesLanguageItem = {
   TypeScript: 'TypeScript',
   JavaScript: 'JavaScript',
+  GraphQL: 'GraphQL',
 } as const;

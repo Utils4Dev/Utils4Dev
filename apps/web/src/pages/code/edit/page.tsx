@@ -72,6 +72,8 @@ export function CodeEditPage() {
       await queryClient.invalidateQueries({
         queryKey: ["/codes"],
       });
+      toast.success("Código atualizado com sucesso");
+      navigate(`/codes/${codeId}`);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao atualizar o código");

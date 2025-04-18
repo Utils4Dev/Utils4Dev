@@ -11,7 +11,7 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <AuthContextProvider>
           <RouterProvider router={router} />
-          <Toaster position="top-right" />
+          <Toaster position="top-right" closeButton />
         </AuthContextProvider>
       </QueryClientProvider>
     </>
