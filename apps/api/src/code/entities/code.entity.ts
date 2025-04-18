@@ -32,6 +32,12 @@ export class Code {
   @Column()
   private: boolean;
 
+  @Column({ type: 'simple-array', nullable: true })
+  keywords: string[];
+
+  @Column({ nullable: true })
+  description: string;
+
   @ManyToOne(() => User, (user) => user.codes)
   authorUser: User;
 }

@@ -1,4 +1,5 @@
 import { useFindCodeByIdSuspense } from "@src/api/code/code";
+import { ExtendedCodeDto } from "@src/api/models/extended-types";
 import { SyntaxHighlighter } from "@src/components/syntax-highlighter";
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar";
 import { Badge } from "@src/components/ui/badge";
@@ -22,6 +23,7 @@ import {
   CopyIcon,
   DownloadIcon,
   PencilIcon,
+  TagIcon,
 } from "lucide-react";
 import { DateTime } from "luxon";
 import { useParams, useNavigate } from "react-router";
@@ -31,7 +33,11 @@ export function CodeDetailsPage() {
   const { codeId } = useParams();
   const navigate = useNavigate();
   const user = useAuthContext();
-  const { data: code } = useFindCodeByIdSuspense(codeId!);
+  const { data: codeData } = useFindCodeByIdSuspense(codeId!);
+
+  // Convertemos CodeDto para ExtendedCodeDto para acessar os campos keywords e description
+  const code = codeData as unknown as ExtendedCodeDto;
+
   const languageInfo = Languages[code.language];
   const isOwner = user.user?.id === code.author.id;
 
@@ -101,17 +107,38 @@ export function CodeDetailsPage() {
               </div>
             </div>
 
-            <Badge
-              style={{ backgroundColor: languageInfo.color }}
-              className={cn(
-                "px-3 py-1",
-                isLightColor(languageInfo.color)
-                  ? "text-slate-900"
-                  : "text-white",
-              )}
-            >
-              {languageInfo.name}
-            </Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                style={{ backgroundColor: languageInfo.color }}
+                className={cn(
+                  "px-3 py-1",
+                  isLightColor(languageInfo.color)
+                    ? "text-slate-900"
+                    : "text-white",
+                )}
+              >
+                {languageInfo.name}
+              </Badge>
+
+              {code.keywords &&
+                code.keywords.length > 0 &&
+                code.keywords.map((keyword, index) => (
+                  <Badge
+                    key={index}
+                    variant="outline"
+                    className="flex items-center gap-1 px-3 py-1"
+                  >
+                    <TagIcon className="h-3 w-3" />
+                    {keyword}
+                  </Badge>
+                ))}
+            </div>
+
+            {code.description && (
+              <div className="text-muted-foreground border-muted-foreground/20 bg-muted/20 mt-2 rounded border-l-4 py-2 pl-4 text-sm">
+                {code.description}
+              </div>
+            )}
           </div>
         </CardHeader>
 
