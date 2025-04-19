@@ -11,6 +11,7 @@ import { CodeLanguage } from '../enum/code-language.enum';
 import { User } from 'src/users/entities/user.entity';
 import { CodeReaction } from './code-reaction.entity';
 import { Comment } from './comment.entity';
+import { Bookmark } from './bookmark.entity';
 
 @Entity()
 export class Code {
@@ -49,4 +50,7 @@ export class Code {
 
   @OneToMany(() => Comment, (comment) => comment.code)
   comments: Comment[];
+
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.code)
+  bookmarks: Bookmark[];
 }

@@ -20,10 +20,10 @@ import { CodeService } from './code.service';
 import { AddCodeReactionDto } from './dto/add-code-reaction.dto';
 import { CodeFilterWithAuthorIdDto } from './dto/code-filter-with-author-id.dto';
 import { CodeFilterDto } from './dto/code-filter.dto';
-import { CreateCodeDto } from './dto/create-code.dto';
-import { UpdateCodeDto } from './dto/update-code.dto';
-import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentDto } from './dto/comment.dto';
+import { CreateCodeDto } from './dto/create-code.dto';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCodeDto } from './dto/update-code.dto';
 
 @Controller('codes')
 export class CodeController {
@@ -127,5 +127,34 @@ export class CodeController {
   @Get(':id/comments')
   async commentsByCodeId(@Param('id') codeId: string): Promise<CommentDto[]> {
     return this.codeService.getCommentsByCodeId(codeId);
+  }
+
+  @Post(':id/bookmark')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async addBookmarkByCodeId(
+    @Param('id') codeId: string,
+    @AuthUser() user: UserDto,
+  ) {
+    await this.codeService.addBookmark(user.id, codeId);
+  }
+
+  @Delete(':id/bookmark')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeBookmarkByCodeId(
+    @Param('id') codeId: string,
+    @AuthUser() user: UserDto,
+  ) {
+    await this.codeService.removeBookmark(user.id, codeId);
+  }
+
+  @Get('me/bookmarks')
+  @UseGuards(JwtAuthGuard)
+  async getBookmarkCodes(
+    @AuthUser() user: UserDto,
+    @Query() filter?: CodeFilterDto,
+  ) {
+    return await this.codeService.getBookmarkCodes(user.id, filter);
   }
 }

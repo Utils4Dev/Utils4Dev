@@ -35,6 +35,7 @@ import type {
   CreateCommentDto,
   FindAllPublicCodesParams,
   FindMyCodesParams,
+  GetBookmarkCodesParams,
   UpdateCodeDto
 } from '.././models';
 
@@ -909,6 +910,250 @@ export function useCommentsByCodeIdSuspense<TData = Awaited<ReturnType<typeof co
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getCommentsByCodeIdSuspenseQueryOptions(id,options)
+
+  const query = useSuspenseQuery(queryOptions , queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const addBookmarkByCodeId = (
+    id: string,
+ options?: SecondParameter<typeof instance>,signal?: AbortSignal
+) => {
+      
+      
+      return instance<void>(
+      {url: `/codes/${id}/bookmark`, method: 'POST', signal
+    },
+      options);
+    }
+  
+
+
+export const getAddBookmarkByCodeIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addBookmarkByCodeId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof instance>}
+): UseMutationOptions<Awaited<ReturnType<typeof addBookmarkByCodeId>>, TError,{id: string}, TContext> => {
+    
+const mutationKey = ['addBookmarkByCodeId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addBookmarkByCodeId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  addBookmarkByCodeId(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddBookmarkByCodeIdMutationResult = NonNullable<Awaited<ReturnType<typeof addBookmarkByCodeId>>>
+    
+    export type AddBookmarkByCodeIdMutationError = unknown
+
+    export const useAddBookmarkByCodeId = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addBookmarkByCodeId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof addBookmarkByCodeId>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getAddBookmarkByCodeIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const removeBookmarkByCodeId = (
+    id: string,
+ options?: SecondParameter<typeof instance>,) => {
+      
+      
+      return instance<void>(
+      {url: `/codes/${id}/bookmark`, method: 'DELETE'
+    },
+      options);
+    }
+  
+
+
+export const getRemoveBookmarkByCodeIdMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeBookmarkByCodeId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof instance>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeBookmarkByCodeId>>, TError,{id: string}, TContext> => {
+    
+const mutationKey = ['removeBookmarkByCodeId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeBookmarkByCodeId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  removeBookmarkByCodeId(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveBookmarkByCodeIdMutationResult = NonNullable<Awaited<ReturnType<typeof removeBookmarkByCodeId>>>
+    
+    export type RemoveBookmarkByCodeIdMutationError = unknown
+
+    export const useRemoveBookmarkByCodeId = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeBookmarkByCodeId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removeBookmarkByCodeId>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getRemoveBookmarkByCodeIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const getBookmarkCodes = (
+    params?: GetBookmarkCodesParams,
+ options?: SecondParameter<typeof instance>,signal?: AbortSignal
+) => {
+      
+      
+      return instance<CodeWithReactionsDto[]>(
+      {url: `/codes/me/bookmarks`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+  
+
+export const getGetBookmarkCodesQueryKey = (params?: GetBookmarkCodesParams,) => {
+    return [`/codes/me/bookmarks`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetBookmarkCodesQueryOptions = <TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(params?: GetBookmarkCodesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetBookmarkCodesQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookmarkCodes>>> = ({ signal }) => getBookmarkCodes(params, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetBookmarkCodesQueryResult = NonNullable<Awaited<ReturnType<typeof getBookmarkCodes>>>
+export type GetBookmarkCodesQueryError = unknown
+
+
+export function useGetBookmarkCodes<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params: undefined |  GetBookmarkCodesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBookmarkCodes>>,
+          TError,
+          Awaited<ReturnType<typeof getBookmarkCodes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBookmarkCodes<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params?: GetBookmarkCodesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getBookmarkCodes>>,
+          TError,
+          Awaited<ReturnType<typeof getBookmarkCodes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBookmarkCodes<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params?: GetBookmarkCodesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetBookmarkCodes<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params?: GetBookmarkCodesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetBookmarkCodesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetBookmarkCodesSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(params?: GetBookmarkCodesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetBookmarkCodesQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookmarkCodes>>> = ({ signal }) => getBookmarkCodes(params, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetBookmarkCodesSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getBookmarkCodes>>>
+export type GetBookmarkCodesSuspenseQueryError = unknown
+
+
+export function useGetBookmarkCodesSuspense<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params: undefined |  GetBookmarkCodesParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBookmarkCodesSuspense<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params?: GetBookmarkCodesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetBookmarkCodesSuspense<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params?: GetBookmarkCodesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetBookmarkCodesSuspense<TData = Awaited<ReturnType<typeof getBookmarkCodes>>, TError = unknown>(
+ params?: GetBookmarkCodesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getBookmarkCodes>>, TError, TData>>, request?: SecondParameter<typeof instance>}
+ , queryClient?: QueryClient 
+ ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetBookmarkCodesSuspenseQueryOptions(params,options)
 
   const query = useSuspenseQuery(queryOptions , queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

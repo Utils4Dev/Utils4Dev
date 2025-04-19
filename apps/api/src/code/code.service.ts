@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, ILike, Repository, DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CodeFilterWithAuthorIdDto } from './dto/code-filter-with-author-id.dto';
 import { CodeFilterDto } from './dto/code-filter.dto';
 import { CodeWithReactionsDto } from './dto/code-with-reactions.dto';
 import { CodeDto } from './dto/code.dto';
-import { CreateCodeDto } from './dto/create-code.dto';
-import { UpdateCodeDto } from './dto/update-code.dto';
-import { Code } from './entities/code.entity';
-import { truncateCodeContent } from './utils/truncate-code-content';
-import { ReactionType } from './enum/reaction-type.enum';
-import { CodeReaction } from './entities/code-reaction.entity';
-import { Comment } from './entities/comment.entity';
-import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentDto } from './dto/comment.dto';
+import { CreateCodeDto } from './dto/create-code.dto';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCodeDto } from './dto/update-code.dto';
+import { Bookmark } from './entities/bookmark.entity';
+import { CodeReaction } from './entities/code-reaction.entity';
+import { Code } from './entities/code.entity';
+import { Comment } from './entities/comment.entity';
+import { ReactionType } from './enum/reaction-type.enum';
+import { truncateCodeContent } from './utils/truncate-code-content';
 
 @Injectable()
 export class CodeService {
@@ -25,6 +26,8 @@ export class CodeService {
     private codeReactionRepository: Repository<CodeReaction>,
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+    @InjectRepository(Bookmark)
+    private bookmarkRepository: Repository<Bookmark>,
   ) {}
 
   async create(createCodeDto: CreateCodeDto, userId: string): Promise<CodeDto> {
@@ -46,10 +49,8 @@ export class CodeService {
     const codes = await this.codeRepository.find({
       relations: { authorUser: true, reactions: { user: true } },
       where: {
+        ...filter.toWhere(),
         private: false,
-        language: filter?.language ? In(filter.language) : undefined,
-        name: filter?.name ? ILike(`%${filter.name}%`) : undefined,
-        authorUser: filter?.authorId ? { id: filter.authorId } : undefined,
       },
     });
 
@@ -68,8 +69,7 @@ export class CodeService {
     const codes = await this.codeRepository.find({
       relations: { authorUser: true, reactions: { user: true } },
       where: {
-        language: filter?.language ? In(filter.language) : undefined,
-        name: filter?.name ? ILike(`%${filter.name}%`) : undefined,
+        ...filter.toWhere(),
         authorUser: { id: authorId },
       },
     });
@@ -156,7 +156,40 @@ export class CodeService {
     return comments.map((c) => CommentDto.fromEntity(c));
   }
 
-  removeCodeById(id: string) {
-    return this.codeRepository.delete(id);
+  async addBookmark(userId: string, codeId: string) {
+    await this.bookmarkRepository.upsert(
+      { user: { id: userId }, code: { id: codeId } },
+      ['user', 'code'],
+    );
+  }
+
+  async removeBookmark(userId: string, codeId: string) {
+    await this.bookmarkRepository.delete({
+      user: { id: userId },
+      code: { id: codeId },
+    });
+  }
+
+  async getBookmarkCodes(
+    userId: string,
+    filter?: CodeFilterWithAuthorIdDto,
+  ): Promise<CodeWithReactionsDto[]> {
+    const codes = await this.codeRepository.find({
+      relations: { authorUser: true, reactions: { user: true } },
+      where: {
+        ...filter.toWhere(),
+        bookmarks: { user: { id: userId } },
+      },
+    });
+
+    return codes.map((code) => {
+      const modifiedCode = { ...code };
+      modifiedCode.content = truncateCodeContent(modifiedCode.content);
+      return CodeWithReactionsDto.fromEntity(modifiedCode);
+    });
+  }
+
+  async removeCodeById(id: string) {
+    await this.codeRepository.delete(id);
   }
 }
