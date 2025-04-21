@@ -11,6 +11,8 @@ export * from './bookmarkDto';
 export * from './codeDto';
 export * from './codeLanguage';
 export * from './codeReactionDto';
+export * from './codeWithReactionsAndBookMarkDto';
+export * from './codeWithReactionsAndBookMarkDtoReactions';
 export * from './codeWithReactionsDto';
 export * from './codeWithReactionsDtoReactions';
 export * from './commentDto';

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { CodeFilterWithAuthorIdDto } from './dto/code-filter-with-author-id.dto';
 import { CodeFilterDto } from './dto/code-filter.dto';
-import { CodeWithReactionsDto } from './dto/code-with-reactions.dto';
+import { CodeWithReactionsAndBookMarkDto } from './dto/code-with-reactions-and-book-mark.dto';
 import { CodeDto } from './dto/code.dto';
 import { CommentDto } from './dto/comment.dto';
 import { CreateCodeDto } from './dto/create-code.dto';
@@ -45,9 +45,10 @@ export class CodeService {
   async findAllPublic(
     userId?: string,
     filter?: CodeFilterWithAuthorIdDto,
-  ): Promise<CodeWithReactionsDto[]> {
+  ): Promise<CodeWithReactionsAndBookMarkDto[]> {
     const codes = await this.codeRepository.find({
-      relations: { authorUser: true, reactions: { user: true } },
+      relations: CodeWithReactionsAndBookMarkDto.getRelations(),
+      order: { createdAt: 'DESC' },
       where: {
         ...filter.toWhere(),
         private: false,
@@ -57,7 +58,7 @@ export class CodeService {
     return codes.map((code) => {
       const modifiedCode = { ...code };
       modifiedCode.content = truncateCodeContent(modifiedCode.content);
-      return CodeWithReactionsDto.fromEntity(modifiedCode, userId);
+      return CodeWithReactionsAndBookMarkDto.fromEntity(modifiedCode, userId);
     });
   }
 
@@ -65,30 +66,33 @@ export class CodeService {
     authorId: string,
     userId?: string,
     filter?: CodeFilterDto,
-  ): Promise<CodeWithReactionsDto[]> {
+  ): Promise<CodeWithReactionsAndBookMarkDto[]> {
     const codes = await this.codeRepository.find({
-      relations: { authorUser: true, reactions: { user: true } },
+      relations: CodeWithReactionsAndBookMarkDto.getRelations(),
+      order: { createdAt: 'DESC' },
       where: {
         ...filter.toWhere(),
         authorUser: { id: authorId },
       },
     });
 
-    return codes.map((code) => CodeWithReactionsDto.fromEntity(code, userId));
+    return codes.map((code) =>
+      CodeWithReactionsAndBookMarkDto.fromEntity(code, userId),
+    );
   }
 
   async findById(
     id: string,
     userId?: string,
-  ): Promise<CodeWithReactionsDto | null> {
+  ): Promise<CodeWithReactionsAndBookMarkDto | null> {
     const code = await this.codeRepository.findOne({
+      relations: CodeWithReactionsAndBookMarkDto.getRelations(),
       where: { id },
-      relations: { authorUser: true, reactions: { user: true } },
     });
 
     if (!code) return null;
 
-    return CodeWithReactionsDto.fromEntity(code, userId);
+    return CodeWithReactionsAndBookMarkDto.fromEntity(code, userId);
   }
 
   async update(id: string, updateCodeDto: UpdateCodeDto): Promise<CodeDto> {
@@ -98,7 +102,7 @@ export class CodeService {
 
         return await transactionalEntityManager.findOneOrFail(Code, {
           where: { id },
-          relations: { authorUser: true, reactions: true },
+          relations: CodeDto.getRelations(),
         });
       },
     );
@@ -148,9 +152,9 @@ export class CodeService {
 
   async getCommentsByCodeId(codeId: string): Promise<CommentDto[]> {
     const comments = await this.commentRepository.find({
+      relations: CommentDto.getRelations(),
       where: { code: { id: codeId } },
       order: { createdAt: 'DESC' },
-      relations: ['author'],
     });
 
     return comments.map((c) => CommentDto.fromEntity(c));
@@ -173,9 +177,10 @@ export class CodeService {
   async getBookmarkCodes(
     userId: string,
     filter?: CodeFilterWithAuthorIdDto,
-  ): Promise<CodeWithReactionsDto[]> {
+  ): Promise<CodeWithReactionsAndBookMarkDto[]> {
     const codes = await this.codeRepository.find({
-      relations: { authorUser: true, reactions: { user: true } },
+      relations: CodeWithReactionsAndBookMarkDto.getRelations(),
+      order: { createdAt: 'DESC' },
       where: {
         ...filter.toWhere(),
         bookmarks: { user: { id: userId } },
@@ -185,7 +190,7 @@ export class CodeService {
     return codes.map((code) => {
       const modifiedCode = { ...code };
       modifiedCode.content = truncateCodeContent(modifiedCode.content);
-      return CodeWithReactionsDto.fromEntity(modifiedCode);
+      return CodeWithReactionsAndBookMarkDto.fromEntity(modifiedCode);
     });
   }
 

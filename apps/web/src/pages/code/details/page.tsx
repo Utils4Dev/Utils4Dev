@@ -1,4 +1,5 @@
 import { useFindCodeByIdSuspense } from "@src/api/code/code";
+import { CodeBookmark } from "@src/components/code-bookmark";
 import { CodeReactions } from "@src/components/code-reactions";
 import { CommentsSection } from "@src/components/comments-section";
 import { SyntaxHighlighter } from "@src/components/syntax-highlighter";
@@ -152,6 +153,8 @@ export function CodeDetailsPage() {
 
         <CardFooter className="bg-muted/50 flex flex-wrap items-center justify-between gap-4 border-t px-6 py-6">
           <div className="flex items-center space-x-4">
+            <CodeBookmark codeId={code.id} isBookmarked={code.isBookmarked} />
+
             <CodeReactions codeId={codeId!} reactions={code.reactions} />
 
             {code.createdAt && (

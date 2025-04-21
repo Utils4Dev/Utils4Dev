@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserDto } from 'src/users/dto/user.dto';
 import { Code } from '../entities/code.entity';
 import { CodeLanguage } from '../enum/code-language.enum';
+import { FindOptionsRelations } from 'typeorm';
 
 export class CodeDto {
   id: string;
@@ -32,5 +33,11 @@ export class CodeDto {
     dto.author = UserDto.fromEntity(entity.authorUser);
 
     return dto;
+  }
+
+  static getRelations(): FindOptionsRelations<Code> {
+    return {
+      authorUser: true,
+    };
   }
 }

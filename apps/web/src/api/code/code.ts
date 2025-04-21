@@ -29,7 +29,7 @@ import type {
 import type {
   AddCodeReactionDto,
   CodeDto,
-  CodeWithReactionsDto,
+  CodeWithReactionsAndBookMarkDto,
   CommentDto,
   CreateCodeDto,
   CreateCommentDto,
@@ -110,7 +110,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 ) => {
       
       
-      return instance<CodeWithReactionsDto[]>(
+      return instance<CodeWithReactionsAndBookMarkDto[]>(
       {url: `/codes`, method: 'GET',
         params, signal
     },
@@ -119,7 +119,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   
 
 export const getFindAllPublicCodesQueryKey = (params?: FindAllPublicCodesParams,) => {
-    return [`/codes`, ...(params ? [params]: [])] as const;
+    return ['codes', ...(params ? [params]: [])] as const;
     }
 
     
@@ -243,7 +243,7 @@ export const findMyCodes = (
 ) => {
       
       
-      return instance<CodeWithReactionsDto[]>(
+      return instance<CodeWithReactionsAndBookMarkDto[]>(
       {url: `/codes/my-codes`, method: 'GET',
         params, signal
     },
@@ -252,7 +252,7 @@ export const findMyCodes = (
   
 
 export const getFindMyCodesQueryKey = (params?: FindMyCodesParams,) => {
-    return [`/codes/my-codes`, ...(params ? [params]: [])] as const;
+    return ['codes','my-codes', ...(params ? [params]: [])] as const;
     }
 
     
@@ -376,7 +376,7 @@ export const findCodeById = (
 ) => {
       
       
-      return instance<CodeWithReactionsDto>(
+      return instance<CodeWithReactionsAndBookMarkDto>(
       {url: `/codes/${id}`, method: 'GET', signal
     },
       options);
@@ -384,7 +384,7 @@ export const findCodeById = (
   
 
 export const getFindCodeByIdQueryKey = (id: string,) => {
-    return [`/codes/${id}`] as const;
+    return ['codes',id] as const;
     }
 
     
@@ -802,7 +802,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   
 
 export const getCommentsByCodeIdQueryKey = (id: string,) => {
-    return [`/codes/${id}/comments`] as const;
+    return ['codes',id,'comments'] as const;
     }
 
     
@@ -1037,7 +1037,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 ) => {
       
       
-      return instance<CodeWithReactionsDto[]>(
+      return instance<CodeWithReactionsAndBookMarkDto[]>(
       {url: `/codes/me/bookmarks`, method: 'GET',
         params, signal
     },
@@ -1046,7 +1046,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   
 
 export const getGetBookmarkCodesQueryKey = (params?: GetBookmarkCodesParams,) => {
-    return [`/codes/me/bookmarks`, ...(params ? [params]: [])] as const;
+    return ['codes','me','bookmarks', ...(params ? [params]: [])] as const;
     }
 
     

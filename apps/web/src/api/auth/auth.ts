@@ -47,7 +47,7 @@ export const me = (
   
 
 export const getMeQueryKey = () => {
-    return [`/auth/me`] as const;
+    return ['auth','me'] as const;
     }
 
     
@@ -179,7 +179,7 @@ export const logout = (
   
 
 export const getLogoutQueryKey = () => {
-    return [`/auth/logout`] as const;
+    return ['auth','logout'] as const;
     }
 
     

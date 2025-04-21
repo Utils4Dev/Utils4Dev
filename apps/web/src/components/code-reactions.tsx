@@ -1,24 +1,12 @@
 import {
-  getFindAllPublicCodesQueryKey,
-  getFindCodeByIdQueryKey,
-  getFindMyCodesQueryKey,
   useAddReactionToCodeById,
   useRemoveReactionToCodeById,
-  useAddBookmark,
-  useRemoveBookmark,
-  useGetBookmarks,
-  getGetBookmarksQueryKey,
 } from "@src/api/code/code";
 import { CodeWithReactionsDtoReactions, ReactionType } from "@src/api/models";
 import { Button } from "@src/components/ui/button";
 import { useAuthContext } from "@src/global-context/auth/hook";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  LucideIcon,
-  BookmarkIcon,
-} from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -60,15 +48,6 @@ export function CodeReactions({
   const { mutateAsync: removeReaction, isPending: isPendingRemoveReaction } =
     useRemoveReactionToCodeById();
 
-  const { data: bookmarks, isLoading: isLoadingBookmarks } = useGetBookmarks();
-  const { mutateAsync: addBookmark, isPending: isPendingAddBookmark } =
-    useAddBookmark();
-  const { mutateAsync: removeBookmark, isPending: isPendingRemoveBookmark } =
-    useRemoveBookmark();
-  const isBookmarkPending = isPendingAddBookmark || isPendingRemoveBookmark;
-
-  const isBookmarked = bookmarks?.some((b) => b.codeId === codeId);
-
   const isPending = isPendingAddReaction || isPendingRemoveReaction;
 
   async function handleReaction(type: ReactionType) {
@@ -103,66 +82,20 @@ export function CodeReactions({
     setLoadingReactionType(null);
   }
 
-  async function handleBookmark() {
-    if (!authenticatedUser || isBookmarkPending) return;
-    try {
-      if (isBookmarked) {
-        await removeBookmark({ id: codeId });
-        toast.success("Removido dos favoritos");
-      } else {
-        await addBookmark({ id: codeId });
-        toast.success("Adicionado aos favoritos");
-      }
-      queryClient.invalidateQueries({ queryKey: getGetBookmarksQueryKey() });
-    } catch (error) {
-      toast.error("Erro ao atualizar favorito");
-    }
-  }
-
   function invalidateQueries() {
     queryClient.invalidateQueries({
-      queryKey: getFindAllPublicCodesQueryKey(),
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: getFindMyCodesQueryKey(),
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: getFindCodeByIdQueryKey(codeId),
+      queryKey: ["codes"],
     });
   }
 
   return (
     <div className="flex items-center gap-3">
-      <Button
-        variant={isBookmarked ? "default" : "ghost"}
-        title={
-          isBookmarked ? "Remover dos favoritos" : "Adicionar aos favoritos"
-        }
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleBookmark();
-        }}
-        disabled={isLoadingBookmarks || isBookmarkPending}
-        className="h-min w-min gap-2 p-1"
-      >
-        <BookmarkIcon
-          className="h-4 w-4"
-          style={{
-            color: isBookmarked ? "#fbbf24" : undefined,
-            fill: isBookmarked ? "#fbbf24" : "none",
-          }}
-          fill={isBookmarked ? "#fbbf24" : "none"}
-        />
-      </Button>
       {Object.entries(REACTIONS).map(([type, { icon: Icon, color, name }]) => {
         const reactionType = type as ReactionType;
         const count = reactions[reactionType]?.length || 0;
         const userReacted = reactions[reactionType]?.userReacted || false;
         const isLoading = loadingReactionType === reactionType;
-        const isDisabled = isPending || isLoading;
+        const isDisabled = isPending || isLoading || !authenticatedUser;
 
         return (
           <Button

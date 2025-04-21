@@ -1,5 +1,6 @@
 import { UserDto } from '@src/users/dto/user.dto';
 import { Comment } from '../entities/comment.entity';
+import { FindOptionsRelations } from 'typeorm';
 
 export class CommentDto {
   id: string;
@@ -13,6 +14,12 @@ export class CommentDto {
       content: comment.content,
       createdAt: comment.createdAt,
       author: UserDto.fromEntity(comment.author),
+    };
+  }
+
+  static getRelations(): FindOptionsRelations<Comment> {
+    return {
+      author: true,
     };
   }
 }
