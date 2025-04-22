@@ -1,0 +1,72 @@
+name: 💡 Solicitação de Funcionalidade
+description: Sugira uma ideia ou melhoria para este projeto
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por sugerir uma nova funcionalidade! Preencha o formulário abaixo para nos ajudar a entender sua proposta.
+  - type: dropdown
+    id: app
+    attributes:
+      label: Aplicação
+      description: Para qual aplicação é esta funcionalidade?
+      options:
+        - Web (Frontend)
+        - API (Backend)
+        - Ambos
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Sua solicitação está relacionada a um problema?
+      description: Descreva claramente qual é o problema
+      placeholder: Ex. Fico frustrado quando [...]
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Descreva a solução que você gostaria
+      description: Explique claramente o que você quer que aconteça
+      placeholder: |
+        Gostaria que houvesse uma opção para...
+
+        O fluxo ideal seria:
+        1. Usuário faz X
+        2. Sistema responde com Y
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Descreva quaisquer soluções alternativas ou recursos que você considerou
+      placeholder: Já tentei resolver isso usando... mas não funciona bem porque...
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto adicional
+      description: Adicione qualquer outro contexto, exemplos de UI/UX ou capturas de tela sobre sua solicitação aqui
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade sugerida
+      description: Qual você acha que deve ser a prioridade desta funcionalidade?
+      options:
+        - Baixa - Seria bom ter
+        - Média - Melhoraria significativamente a experiência
+        - Alta - É crucial para a funcionalidade do aplicativo
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Código de Conduta
+      description: Ao enviar esta sugestão, você concorda com os termos do nosso código de conduta
+      options:
+        - label: Concordo em seguir o código de conduta deste projeto
+          required: true
