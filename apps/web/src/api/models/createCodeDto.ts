@@ -8,6 +8,8 @@ import type { CodeLanguage } from './codeLanguage';
 
 export interface CreateCodeDto {
   language: CodeLanguage;
+  keywords?: string[];
+  description?: string;
   name: string;
   content?: string;
   private: boolean;

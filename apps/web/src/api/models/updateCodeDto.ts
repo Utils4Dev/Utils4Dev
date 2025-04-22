@@ -6,6 +6,8 @@
  */
 
 export interface UpdateCodeDto {
+  keywords?: string[];
+  description?: string;
   name?: string;
   content?: string;
   private?: boolean;

@@ -15,5 +15,7 @@ export interface CodeDto {
   name: string;
   content: string;
   private: boolean;
+  keywords: string[];
+  description: string;
   author: UserDto;
 }
