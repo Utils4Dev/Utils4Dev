@@ -10,7 +10,7 @@ import { cn } from "@src/lib/utils";
 
 // URL do repositório GitHub do projeto - ajuste para o seu repositório específico
 const GITHUB_ISSUES_URL =
-  "https://github.com/microsoft/monaco-editor/issues/new";
+  "https://github.com/Utils4Dev/Utils4Dev/issues/new";
 
 type GithubIssuesButtonProps = {
   className?: string;
