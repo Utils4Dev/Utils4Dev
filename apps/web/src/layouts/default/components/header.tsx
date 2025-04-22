@@ -17,11 +17,9 @@ export function Header({ className, ...props }: HeaderProps) {
         </h1>
       </Link>
 
-      {user ? (
-        <UserInfo user={user} onLogout={logout} className="ml-auto" />
-      ) : (
-        <LoginButton className="ml-auto" />
-      )}
+      <div className="ml-auto flex items-center gap-3">
+        {user ? <UserInfo user={user} onLogout={logout} /> : <LoginButton />}
+      </div>
     </header>
   );
 }
