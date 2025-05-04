@@ -176,6 +176,7 @@ export class CodeService {
 
   async getBookmarkCodes(
     userId: string,
+    authenticatedUserId: string,
     filter?: CodeFilterWithAuthorIdDto,
   ): Promise<CodeWithReactionsAndBookMarkDto[]> {
     const codes = await this.codeRepository.find({
@@ -190,7 +191,10 @@ export class CodeService {
     return codes.map((code) => {
       const modifiedCode = { ...code };
       modifiedCode.content = truncateCodeContent(modifiedCode.content);
-      return CodeWithReactionsAndBookMarkDto.fromEntity(modifiedCode);
+      return CodeWithReactionsAndBookMarkDto.fromEntity(
+        modifiedCode,
+        authenticatedUserId,
+      );
     });
   }
 

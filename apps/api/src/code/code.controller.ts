@@ -155,6 +155,6 @@ export class CodeController {
     @AuthUser() user: UserDto,
     @Query() filter?: CodeFilterDto,
   ) {
-    return await this.codeService.getBookmarkCodes(user.id, filter);
+    return await this.codeService.getBookmarkCodes(user.id, user.id, filter);
   }
 }
