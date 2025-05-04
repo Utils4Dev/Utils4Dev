@@ -47,9 +47,11 @@ export function UserInfo({ user, onLogout, className }: UserInfoProps) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
-          <UserIcon />
-          <span>Perfil</span>
+        <DropdownMenuItem asChild>
+          <Link to={`/users/${user.id}`}>
+            <UserIcon />
+            <span>Perfil</span>
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>

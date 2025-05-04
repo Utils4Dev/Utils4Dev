@@ -3,8 +3,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
-  Param,
   Redirect,
   Res,
   UseGuards,
@@ -38,23 +36,6 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('access_token');
-  }
-
-  // TODO: Remover rota em produção
-  @Get('/token/:userId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiExcludeEndpoint()
-  async tokenByUserId(
-    @Param('userId') userId: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    if (process.env.NODE_ENV !== 'local')
-      throw new NotFoundException('Route not available in this environment');
-
-    const user = await this.userService.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
-    const { accessToken: access_token } = this.authService.login(user);
-    res.cookie('access_token', access_token, { httpOnly: true });
   }
 
   @UseGuards(GithubAuthGuard)

@@ -1,0 +1,81 @@
+name: 🐞 Relatório de Bug
+description: Crie um relatório para nos ajudar a melhorar o projeto
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por dedicar seu tempo para preencher este relatório de bug!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o bug de forma clara e concisa
+      placeholder: Quando tento fazer X, acontece Y em vez de Z
+    validations:
+      required: true
+  - type: dropdown
+    id: app
+    attributes:
+      label: Aplicação
+      description: Em qual aplicação o bug ocorreu?
+      options:
+        - Web (Frontend)
+        - API (Backend)
+        - Ambos
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Navegador
+      description: Se aplicável, em quais navegadores você encontrou o problema?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Opera
+        - Outro
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      description: Como podemos reproduzir o comportamento observado?
+      placeholder: |
+        1. Vá para '...'
+        2. Clique em '....'
+        3. Role até '....'
+        4. Veja o erro
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+      description: O que você esperava que acontecesse?
+      placeholder: Deveria ter aparecido uma mensagem de sucesso...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs ou mensagens de erro
+      description: Se aplicável, cole qualquer log ou mensagem de erro que você recebeu
+      render: shell
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações adicionais
+      description: Adicione qualquer outra informação relevante sobre o problema aqui
+      placeholder: Versão do sistema operacional, configurações específicas, etc.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Código de Conduta
+      description: Ao enviar este problema, você concorda com os termos do nosso código de conduta
+      options:
+        - label: Concordo em seguir o código de conduta deste projeto
+          required: true
