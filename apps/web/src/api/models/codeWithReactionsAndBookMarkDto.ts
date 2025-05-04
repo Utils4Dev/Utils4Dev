@@ -5,10 +5,13 @@
  * OpenAPI spec version: 1.0
  */
 import type { CodeLanguage } from './codeLanguage';
+import type { CodeWithReactionsAndBookMarkDtoReactions } from './codeWithReactionsAndBookMarkDtoReactions';
 import type { UserDto } from './userDto';
 
-export interface CodeDto {
+export interface CodeWithReactionsAndBookMarkDto {
   language: CodeLanguage;
+  reactions: CodeWithReactionsAndBookMarkDtoReactions;
+  isBookmarked: boolean;
   id: string;
   createdAt: string;
   updatedAt: string;

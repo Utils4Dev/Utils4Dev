@@ -1,7 +1,4 @@
 import {
-  getFindAllPublicCodesQueryKey,
-  getFindCodeByIdQueryKey,
-  getFindMyCodesQueryKey,
   useAddReactionToCodeById,
   useRemoveReactionToCodeById,
 } from "@src/api/code/code";
@@ -87,15 +84,7 @@ export function CodeReactions({
 
   function invalidateQueries() {
     queryClient.invalidateQueries({
-      queryKey: getFindAllPublicCodesQueryKey(),
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: getFindMyCodesQueryKey(),
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: getFindCodeByIdQueryKey(codeId),
+      queryKey: ["codes"],
     });
   }
 
@@ -106,7 +95,7 @@ export function CodeReactions({
         const count = reactions[reactionType]?.length || 0;
         const userReacted = reactions[reactionType]?.userReacted || false;
         const isLoading = loadingReactionType === reactionType;
-        const isDisabled = isPending || isLoading;
+        const isDisabled = isPending || isLoading || !authenticatedUser;
 
         return (
           <Button

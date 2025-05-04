@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface CreateCommentDto {
-  content: string;
+export interface BookmarkDto {
+  id: string;
+  codeId: string;
 }

@@ -10,7 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "@src/components/ui/dropdown-menu";
 import { cn } from "@src/lib/utils";
-import { ChevronDownIcon, CodeIcon, LogOutIcon, UserIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  CodeIcon,
+  LogOutIcon,
+  UserIcon,
+  BookmarkIcon,
+} from "lucide-react";
 import { Link } from "react-router";
 
 type UserInfoProps = {
@@ -50,6 +56,13 @@ export function UserInfo({ user, onLogout, className }: UserInfoProps) {
           <Link to={`/codes/me`}>
             <CodeIcon />
             <span>Meus códigos</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link to="/codes/me/bookmarks">
+            <BookmarkIcon />
+            <span>Favoritos</span>
           </Link>
         </DropdownMenuItem>
 

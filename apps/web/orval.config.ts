@@ -5,6 +5,7 @@ export default defineConfig({
     input: "http://localhost:3000/docs/json",
     output: {
       mode: "tags-split",
+
       target: "./src/api",
       schemas: "./src/api/models",
       client: "react-query",
@@ -12,6 +13,7 @@ export default defineConfig({
       override: {
         query: {
           useSuspenseQuery: true,
+          shouldSplitQueryKey: true,
         },
         mutator: {
           path: "./src/api/http-instance.ts",

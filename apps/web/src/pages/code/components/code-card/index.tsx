@@ -1,4 +1,5 @@
-import { CodeWithReactionsDto } from "@src/api/models";
+import { CodeWithReactionsAndBookMarkDto } from "@src/api/models";
+import { CodeBookmark } from "@src/components/code-bookmark";
 import { CodeReactions } from "@src/components/code-reactions";
 import { SyntaxHighlighter } from "@src/components/syntax-highlighter";
 import { Badge } from "@src/components/ui/badge";
@@ -14,7 +15,7 @@ import { cn } from "@src/lib/utils";
 import { isLightColor } from "@src/utils/is-light-color";
 
 type CodeCardProps = {
-  code: CodeWithReactionsDto;
+  code: CodeWithReactionsAndBookMarkDto;
 };
 
 export function CodeCard({ code }: CodeCardProps) {
@@ -49,7 +50,10 @@ export function CodeCard({ code }: CodeCardProps) {
           </span>
         </div>
 
-        <CodeReactions codeId={code.id} reactions={code.reactions} />
+        <div className="flex items-center gap-2">
+          <CodeBookmark codeId={code.id} isBookmarked={code.isBookmarked} />
+          <CodeReactions codeId={code.id} reactions={code.reactions} />
+        </div>
       </CardFooter>
     </Card>
   );

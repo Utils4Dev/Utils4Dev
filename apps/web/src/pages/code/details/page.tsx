@@ -1,5 +1,7 @@
 import { useFindCodeByIdSuspense } from "@src/api/code/code";
+import { CodeBookmark } from "@src/components/code-bookmark";
 import { CodeReactions } from "@src/components/code-reactions";
+import { CommentsSection } from "@src/components/comments-section";
 import { SyntaxHighlighter } from "@src/components/syntax-highlighter";
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar";
 import { Badge } from "@src/components/ui/badge";
@@ -23,19 +25,22 @@ import {
   CopyIcon,
   DownloadIcon,
   PencilIcon,
+  TagIcon,
 } from "lucide-react";
 import { DateTime } from "luxon";
-import { useParams, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
-import { CommentsSection } from "@src/components/comments-section";
 
 export function CodeDetailsPage() {
   const { codeId } = useParams();
   const navigate = useNavigate();
   const user = useAuthContext();
   const { data: code } = useFindCodeByIdSuspense(codeId!);
+
+  // Convertemos CodeDto para ExtendedCodeDto para acessar os campos keywords e description
+
   const languageInfo = Languages[code.language];
-  const isOwner = user.user?.id === code.author.id;
+  const isOwner = user.authenticatedUser?.id === code.author.id;
 
   function copyToClipboard() {
     navigator.clipboard.writeText(code.content);
@@ -103,17 +108,38 @@ export function CodeDetailsPage() {
               </div>
             </div>
 
-            <Badge
-              style={{ backgroundColor: languageInfo.color }}
-              className={cn(
-                "px-3 py-1",
-                isLightColor(languageInfo.color)
-                  ? "text-slate-900"
-                  : "text-white",
-              )}
-            >
-              {languageInfo.name}
-            </Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                style={{ backgroundColor: languageInfo.color }}
+                className={cn(
+                  "px-3 py-1",
+                  isLightColor(languageInfo.color)
+                    ? "text-slate-900"
+                    : "text-white",
+                )}
+              >
+                {languageInfo.name}
+              </Badge>
+
+              {code.keywords &&
+                code.keywords.length > 0 &&
+                code.keywords.map((keyword, index) => (
+                  <Badge
+                    key={index}
+                    variant="outline"
+                    className="flex items-center gap-1 px-3 py-1"
+                  >
+                    <TagIcon className="h-3 w-3" />
+                    {keyword}
+                  </Badge>
+                ))}
+            </div>
+
+            {code.description && (
+              <div className="text-muted-foreground border-muted-foreground/20 bg-muted/20 mt-2 rounded border-l-4 py-2 pl-4 text-sm">
+                {code.description}
+              </div>
+            )}
           </div>
         </CardHeader>
 
@@ -127,6 +153,8 @@ export function CodeDetailsPage() {
 
         <CardFooter className="bg-muted/50 flex flex-wrap items-center justify-between gap-4 border-t px-6 py-6">
           <div className="flex items-center space-x-4">
+            <CodeBookmark codeId={code.id} isBookmarked={code.isBookmarked} />
+
             <CodeReactions codeId={codeId!} reactions={code.reactions} />
 
             {code.createdAt && (

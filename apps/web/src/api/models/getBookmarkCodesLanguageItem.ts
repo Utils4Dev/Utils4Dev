@@ -5,11 +5,11 @@
  * OpenAPI spec version: 1.0
  */
 
-export type FindAllPublicCodesLanguageItem = typeof FindAllPublicCodesLanguageItem[keyof typeof FindAllPublicCodesLanguageItem];
+export type GetBookmarkCodesLanguageItem = typeof GetBookmarkCodesLanguageItem[keyof typeof GetBookmarkCodesLanguageItem];
 
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const FindAllPublicCodesLanguageItem = {
+export const GetBookmarkCodesLanguageItem = {
   TypeScript: 'TypeScript',
   JavaScript: 'JavaScript',
   GraphQL: 'GraphQL',
