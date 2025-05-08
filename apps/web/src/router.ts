@@ -6,6 +6,7 @@ import { PrivatePage } from "./pages/private-page";
 import { Home } from "./pages/home";
 import { CodeDetails } from "./pages/code/details";
 import { MyCodeList } from "./pages/code/my-codes";
+import { BookmarkList } from "./pages/code/bookmarks";
 import { UsersDetails } from "./pages/users/details";
 
 export const router = createBrowserRouter([
@@ -48,6 +49,10 @@ export const router = createBrowserRouter([
           {
             path: "codes/:codeId/edit",
             Component: CodeEdit,
+          },
+          {
+            path: "codes/me/bookmarks",
+            Component: BookmarkList,
           },
         ],
       },

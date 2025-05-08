@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useDeleteCodeById,
   useFindCodeByIdSuspense,
-  useUpdateCode,
+  useUpdateCodeById,
 } from "@src/api/code/code";
 import {
   ExtendedCodeDto,
@@ -75,7 +75,7 @@ export function CodeEditPage() {
   const code = codeData as unknown as ExtendedCodeDto;
 
   const { mutateAsync: updateCode, isPending: isUpdatePending } =
-    useUpdateCode();
+    useUpdateCodeById();
   const { mutateAsync: deleteCode, isPending: isDeletePending } =
     useDeleteCodeById();
 
@@ -139,6 +139,10 @@ export function CodeEditPage() {
       });
       await findCodeByIdRefetch();
       toast.success("Código atualizado com sucesso");
+
+      await queryClient.invalidateQueries({
+        queryKey: ["/codes"],
+      });
       navigate(`/codes/${codeId}`);
     } catch (error) {
       console.error(error);

@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { GithubProvider } from '../entities/github-provider.entity';
 import { Code } from 'src/code/entities/code.entity';
+import { Comment } from 'src/code/entities/comment.entity';
+import { Bookmark } from 'src/code/entities/bookmark.entity';
 
 @Entity()
 export class User {
@@ -35,6 +37,12 @@ export class User {
 
   @OneToMany(() => Code, (code) => code.authorUser)
   codes: Code[];
+
+  @OneToMany(() => Comment, (comment) => comment.author)
+  comments: Comment[];
+
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  bookmarks: Bookmark[];
 
   @OneToOne(() => GithubProvider, (githubProvider) => githubProvider.user)
   githubProvider: GithubProvider;

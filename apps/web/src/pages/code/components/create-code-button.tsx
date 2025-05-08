@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateCode } from "@src/api/code/code";
 import { CodeLanguage } from "@src/api/models";
-import { ExtendedCreateCodeDto } from "@src/api/models/extended-types";
 import { CodeEditor } from "@src/components/code-editor";
 import { Button } from "@src/components/ui/button";
 import {
@@ -47,7 +46,7 @@ const formSchema = z.object({
     required_error: "Linguagem é obrigatória",
     invalid_type_error: "Linguagem inválida",
   }),
-  isPrivate: z.boolean().default(true),
+  isPrivate: z.boolean(),
   code: z.string().nonempty("Código é obrigatório"),
   keywords: z
     .string()
@@ -111,9 +110,10 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
     });
 
     return () => subscription.unsubscribe();
-  }, [form.watch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  if (user.isLoading || user.user === null) return <></>;
+  if (user.isLoading || user.authenticatedUser === null) return null;
 
   async function handleSubmit({
     name,
@@ -140,7 +140,7 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
         content: code,
         keywords: keywordsArray,
         description: description?.slice(0, MAX_DESCRIPTION_LENGTH),
-      } as ExtendedCreateCodeDto,
+      },
     });
 
     setIsOpen(false);
@@ -225,6 +225,7 @@ export function CreateCodeButton({ className }: CreateCodeButtonProps) {
               {/* Privado */}
               <FormField
                 control={form.control}
+                defaultValue={false}
                 name="isPrivate"
                 render={({ field }) => (
                   <FormItem className="mt-8">

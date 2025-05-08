@@ -1,5 +1,7 @@
 import { useFindCodeByIdSuspense } from "@src/api/code/code";
-import { ExtendedCodeDto } from "@src/api/models/extended-types";
+import { CodeBookmark } from "@src/components/code-bookmark";
+import { CodeReactions } from "@src/components/code-reactions";
+import { CommentsSection } from "@src/components/comments-section";
 import { SyntaxHighlighter } from "@src/components/syntax-highlighter";
 import { Avatar, AvatarFallback, AvatarImage } from "@src/components/ui/avatar";
 import { Badge } from "@src/components/ui/badge";
@@ -26,20 +28,19 @@ import {
   TagIcon,
 } from "lucide-react";
 import { DateTime } from "luxon";
-import { useParams, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
 export function CodeDetailsPage() {
   const { codeId } = useParams();
   const navigate = useNavigate();
   const user = useAuthContext();
-  const { data: codeData } = useFindCodeByIdSuspense(codeId!);
+  const { data: code } = useFindCodeByIdSuspense(codeId!);
 
   // Convertemos CodeDto para ExtendedCodeDto para acessar os campos keywords e description
-  const code = codeData as unknown as ExtendedCodeDto;
 
   const languageInfo = Languages[code.language];
-  const isOwner = user.user?.id === code.author.id;
+  const isOwner = user.authenticatedUser?.id === code.author.id;
 
   function copyToClipboard() {
     navigator.clipboard.writeText(code.content);
@@ -62,7 +63,7 @@ export function CodeDetailsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto space-y-4 py-8">
       <Card className="border pb-0 shadow-md">
         <CardHeader>
           <div className="flex flex-col space-y-4">
@@ -152,6 +153,10 @@ export function CodeDetailsPage() {
 
         <CardFooter className="bg-muted/50 flex flex-wrap items-center justify-between gap-4 border-t px-6 py-6">
           <div className="flex items-center space-x-4">
+            <CodeBookmark codeId={code.id} isBookmarked={code.isBookmarked} />
+
+            <CodeReactions codeId={codeId!} reactions={code.reactions} />
+
             {code.createdAt && (
               <div className="text-muted-foreground flex items-center text-sm">
                 <CalendarIcon className="mr-1 h-3 w-3" />
@@ -181,6 +186,8 @@ export function CodeDetailsPage() {
           </div>
         </CardFooter>
       </Card>
+
+      <CommentsSection codeId={code.id} />
     </div>
   );
 }

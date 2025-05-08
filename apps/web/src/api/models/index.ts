@@ -5,12 +5,25 @@
  * OpenAPI spec version: 1.0
  */
 
+export * from './addCodeReactionDto';
+export * from './addCodeReactionDtoType';
+export * from './bookmarkDto';
 export * from './codeDto';
 export * from './codeLanguage';
+export * from './codeReactionDto';
+export * from './codeWithReactionsAndBookMarkDto';
+export * from './codeWithReactionsAndBookMarkDtoReactions';
+export * from './codeWithReactionsDto';
+export * from './codeWithReactionsDtoReactions';
+export * from './commentDto';
 export * from './createCodeDto';
+export * from './createCommentDto';
 export * from './findAllPublicCodesLanguageItem';
 export * from './findAllPublicCodesParams';
 export * from './findMyCodesLanguageItem';
 export * from './findMyCodesParams';
+export * from './getBookmarkCodesLanguageItem';
+export * from './getBookmarkCodesParams';
+export * from './reactionType';
 export * from './updateCodeDto';
 export * from './userDto';
